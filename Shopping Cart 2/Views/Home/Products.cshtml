@@ -1,0 +1,128 @@
+﻿@model IEnumerable<Item>
+
+
+
+ 
+
+<div class="container py-3">
+    <!-- For Demo Purpose-->
+    <header class="text-center mb-5">
+        <!-- feltering -->
+        <ul class=" nav justify-content-center links-container cat">
+            <li  >
+                <a class=" btn btn-dark cat" style="width: 3rem" asp-action="Products">All</a>
+            </li>
+            @foreach (var g in ViewBag.categories)
+            {
+                <li  >
+                    <a class=" btn btn-outline-dark cat" asp-action="Products" asp-route-categoryName="@g.Name">@g.Name</a>
+                </li>
+            }
+        </ul>
+        <!--search-->
+        <div class="container-fluid search">
+            <form asp-controller="Home" asp-action="Products" class="d-flex" role="search" >
+                <input name="seachName" class="form-control me-2 ser2 " type="search" placeholder="Search" aria-label="Search"
+                       value="@ViewBag.seachName">
+                <button class="btn btn-outline-success  " type="submit">Search</button> 
+            </form>
+        </div>
+        <h1 class="display-4 font-weight-bold">Click And Buy !</h1>
+         
+    </header>
+    
+    <!-- First Row [Prosucts]-->
+     
+    @if (!Model.Any())
+    {
+        <div class="container alert alert-warning mt-5">
+
+            <h4 class="alert-heading ">No items !</h4>
+            <p class="mb-0">No items were added yet..</p>
+        </div>
+    }
+    else
+    {
+
+        <div class="row pb-5 mb-4">
+            @foreach (var item in Model) 
+            {
+                <input type="hidden" asp-route-itemId="@item.Id"   />
+            <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
+                <!-- Card--> 
+                <div class="card rounded shadow-sm border-0">
+                    <div class="card-body p-4">
+                            <a asp-controller="Items" asp-action="Details" asp-route-itemId="@item.Id">
+                                @if (string.IsNullOrEmpty(item.Cover))
+                                {
+                                    <img style="width:100%;height:180px" src="/assets/images/NoImage.png" class="card-img-top" alt="...">
+
+                                }
+                                else
+                                {
+                                    <img style="width:100%;height:180px" src="/assets/images/items/@item.Cover" class="card-img-top" alt="...">
+                                }
+                            </a>
+                            <h5> <a href="#" class="text-dark">@item.Name</a></h5>
+                            <h5>  @item.Price $ </h5>
+                            
+                        <p class="small text-muted font-italic"> @item.Description</p> 
+                            <!--Not worked // rating product-->
+                            @if(@item.ProductAverageRate ==-1){
+                                    <p>Not Rated yet</p>
+                            }
+                                else
+                                {
+                                    <ul class="list-inline small">
+                                        @{
+                                            int wholeStar = (int)item.ProductAverageRate;
+                                            bool hasHalfStar = item.ProductAverageRate % 1 > 0;
+                                        }
+
+                                        @for (int i = 0; i < wholeStar; i++)
+                                        {
+                                            <li class="list-inline-item m-0"><i class="fa fa-star text-success"></i></li>
+                                        }
+
+                                        @if (hasHalfStar)
+                                        {
+                                            <li class="list-inline-item m-0"><i class="fa fa-star-half text-success"></i></li>
+                                        }
+                                    </ul>
+                                } 
+                             
+                    </div>
+                </div> 
+            </div>
+            }
+        </div>
+    } 
+</div> 
+ 
+@section Scripts {
+
+    <script>
+        async function add(itemId) {
+            var usernameEl = document.getElementById("username");
+            if (usernameEl == null) {
+                window.location.href = "/Identity/Account/Login";
+
+            }
+            try {
+                var response = await fetch(`/Cart/AddItem?itemId=${itemId}`);
+                if (response.status == 200) {
+                    var result = await response.json();
+                    var cartCountEl = document.getElementById("cartCount");
+                    cartCountEl.innerHTML = result;
+                    window.location.href = "#cartCount";
+                }
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+    </script>
+}
+
+
+

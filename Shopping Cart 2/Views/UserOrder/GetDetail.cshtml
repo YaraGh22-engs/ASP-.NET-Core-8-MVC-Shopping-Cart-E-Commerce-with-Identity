@@ -1,0 +1,74 @@
+﻿@model Order
+
+@{
+    ViewData["Title"] = "GetDetail";
+}
+
+<div   class="container mt-4">
+    <h1 class="mt-5">Details for Order Number  @Model.Id </h1>
+    <a asp-action="UserOrders" class="btn btn-dark rounded-pill  m-3" style="width: 9rem;">Back</a>
+
+    <div class="row py-5 p-4 bg-white rounded shadow-sm">
+        <!-- Order table -->
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col" class="border-0 bg-light">
+                            <div class="p-2 px-3 text-uppercase">Product</div>
+                        </th>
+                        <th scope="col" class="border-0 bg-light">
+                            <div class="py-2 text-uppercase">Price </div>
+                        </th>
+                        <th scope="col" class="border-0 bg-light">
+                            <div class="py-2 text-uppercase">Quantity</div>
+                        </th>
+
+                        <th scope="col" class="border-0 bg-light">
+                            <div class="py-2 text-uppercase">Total</div>
+                        </th>
+                         
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var i in Model.OrderDetail)
+                    {
+                        <tr>
+                            <th scope="row" class="border-0">
+                                <div class="p-2">
+                                    <img src="/assets/images/items/@i.Item.Cover" alt="" width="70" class="img-fluid rounded shadow-sm">
+                                    <div class="ml-3 d-inline-block align-middle">
+                                        <h5 class="mb-0"> <a href="#" class="text-dark d-inline-block align-middle">Timex Unisex Originals</a></h5><span class="text-muted font-weight-normal font-italic d-block">Category: @i.Item.Category.Name</span>
+                                    </div>
+                                </div>
+                            </th>
+                            <td class="border-0 align-middle"><strong>$ @i.Item.Price</strong></td>
+                            <td class="border-0 align-middle"><strong>@i.Quantity</strong></td>
+                            <td class="border-0 align-middle"><strong>$ @(i.Item.Price * i.Quantity)</strong></td> 
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- End -->
+    </div> 
+     <!-- Order summary -->
+    <div class="row py-5 p-4 bg-white rounded shadow-sm">
+        <div class="bg-light rounded-pill px-4 py-3 text-uppercase fw-bold">Order summary </div>
+        <div class="p-4">
+            <p class="font-italic mb-4">Shipping and additional costs are calculated based on values you have entered.</p>
+            <ul class="list-unstyled mb-4">
+                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Order Status</strong><strong>@(Model.OrderStatus.StatusName)</strong></li>
+                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Order Subtotal </strong><strong>$@(Model.OrderDetail.Select(i => i.Item.Price * i.Quantity).Sum())</strong></li>
+                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Shipping and handling</strong><strong>$0.00</strong></li>
+                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Tax</strong><strong>$0.00</strong></li>
+                <li class="d-flex justify-content-between py-3 border-bottom">
+                    <strong class="text-muted">Total Price of Order </strong>
+                    <h5 class="font-weight-bold">$@(Model.OrderDetail.Select(i => i.Item.Price * i.Quantity).Sum()) </h5>
+                </li>
+            </ul> 
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,79 @@
+﻿@using Shopping_Cart_2.Sittings
+@model IEnumerable<Item>
+
+@{
+    Layout = "_AdminLayout";
+    ViewData["Title"] = "Item";
+}
+<div class="container">
+    <h1   style="text-align: center;">Manage Store Products</h1>
+    <a class="btn btn-secondary btn-lg" asp-controller="Items" asp-action="Create" style="margin-top: 2rem;">
+        <i class="bi bi-plus-circle-dotted"></i>
+        Add Item
+    </a>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-warning mt-5">
+            <h4 class="alert-heading">No Item!</h4>
+            <p class="mb-0">No Items were added yet.</p>
+        </div>
+    }
+    else
+    {
+        <div>
+            <table class="table table-hover border-primary " id="example">
+                <thead>
+                    <tr>
+                        <th>Item</th>
+                        <th>UserId</th>
+                        <th>Category</th>
+                        <th>Image</th>
+                        <th>Is Approved</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var g in Model)
+                    {
+                        <tr class="border-1 border-success " style="justify-content:center ">
+                            <td>@g.Name</td>
+                            <td>@g.UserId</td>
+                            <td>@g.Category.Name</td>
+                            <td>
+                                <div class="pe-4">
+                                    <img src="@($"{FileSettings.ImagesPath}/{g.Cover}")" alt="@g.Name" style="width:100px;height:100px" />
+                                </div>
+                            </td>
+                            <td> @g.IsApproved </td>
+                            <td class="align-middle">
+                                <div class="d-flex justify-content-end">
+                                    <a class="btn btn-info rounded rounded-3 me-2" asp-controller="Items" asp-action="Edit" asp-route-id="@g.Id">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <a class="btn btn-danger  rounded-pill   js-delete  me-2" data-id="@g.Id">
+                                        <i class="bi bi-trash3"></i>
+                                    </a>
+                                    <a asp-action="ToggleApprovementStatus" asp-route-ItemId="@g.Id" class="btn btn-dark rounded-pill  me-2"> Toggle Approvement Status</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable({ responsive: true });
+        });
+    </script>
+    <script src="~/js/item-delete.js"></script>
+
+}

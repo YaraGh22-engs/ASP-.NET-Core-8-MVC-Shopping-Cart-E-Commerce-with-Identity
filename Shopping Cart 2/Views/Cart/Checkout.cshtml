@@ -1,0 +1,55 @@
+﻿@using Shopping_Cart_2.Constants
+@model CheckoutModel
+@{
+    ViewData["Title"] = "Checkout";
+}
+<div class="container " style="width: fit-content;">
+    <h2 class="mt-3">Checkout</h2>
+    <form asp-action="Checkout">
+
+        <div class="row form-outline mb-4">
+            <label class="fw-bold" asp-for="Name">Name*</label>
+            <input type="text" class="form-control" asp-for="Name" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="row mb-4">
+            <label class="fw-bold" asp-for="Email">Email*</label>
+            <input type="text" class="form-control" asp-for="Email" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+
+        </div>
+
+        <div class="row mb-4">
+            <label class="fw-bold" asp-for="MobileNumber">MobileNumber*</label>
+            <input type="text" class="form-control" asp-for="MobileNumber" />
+            <span asp-validation-for="MobileNumber" class="text-danger"></span>
+        </div>
+
+
+        <div class="row mb-4">
+            <label class="fw-bold" asp-for="Address">Address*</label>
+            <textarea class="form-control" asp-for="Address" rows="5"> </textarea>
+            <span asp-validation-for="Address" class="text-danger"></span>
+        </div>
+
+        <div class="row mb-4">
+            <span class="mr-2 fw-bold">COD*</span>
+            <select asp-for="PaymentMethod" class="form-control">
+                <option   value="">Select Payment Method</option>
+                @foreach (var method in Enum.GetValues(typeof(PaymentMethods)))
+                {
+                    <option value="@method.ToString()">@method.ToString()</option>
+
+                }
+            </select>
+            <span asp-validation-for="PaymentMethod" class="text-danger"></span>
+        </div>
+
+        <div class="row mb-4">
+            <button type="submit" class="btn btn-dark rounded-pill ">Next</button>
+
+        </div>
+    </form>
+</div>
+

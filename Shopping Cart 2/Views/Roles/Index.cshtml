@@ -1,0 +1,49 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@model IEnumerable<IdentityUser>
+
+@{
+    ViewData["Title"] = "Users";
+    Layout = "_AdminLayout";
+}
+
+<div class="container p-3">
+
+
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">System Users</h2>
+        </div>
+    </div>
+
+    <table class="table table-hover">
+        <thead>
+            <tr> 
+                <th scope="col">  User Id  </th>
+                <th scope="col"> User Name  </th>
+                <th scope="col"> PhoneNumber </th>
+                <th scope="col"> Email </th>
+                <th scope="col"> Email Confirm  </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in Model)
+            {
+
+                <tr class="table-primary"> 
+                    <td scope="row" width="30%">   @u.Id  </td>
+                    <td> @u.UserName </td> 
+                    <td> @u.PhoneNumber </td>
+                    <td> @u.Email </td>
+                    <td> @u.EmailConfirmed </td>
+                     
+
+                    <td>
+                        <a asp-controller="Roles" asp-action="addRoles" asp-route-userId="@u.Id" class="btn btn-sm btn-success">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

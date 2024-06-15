@@ -1,0 +1,46 @@
+﻿@model IEnumerable<Order>
+
+@* this page appears in Account Page so we add nav link in  "/Areas/Identity/Pages/Account/Manage/ManageNav"  *@
+
+@{
+}
+
+<div>
+
+</div>
+<div    class="container mt-4">
+    <a href="/Identity/Account/Manage" class="btn btn-dark  my-2">Back</a>
+
+    <h4 class="mt-4">My Orders</h4>
+    @if (Model != null && Model.Count() > 0)
+    {
+        <table class="table table-light">
+            <thead> 
+                <tr>
+                    <th scope="col">OrderDate</th>
+                    <th scope="col">OrderStatus</th>
+                    <th scope="col"> Total:</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.CreateDate.ToString("dd-MM-yyyy")</td>
+                        <td>@order.OrderStatus.StatusName</td>
+                        <td> $@(order.OrderDetail.Select(b => b.Item.Price * b.Quantity).Sum())  </td>
+                        <td> <a class="btn btn-dark  rounded-pill   my-2" asp-action="GetDetail" asp-route-orderId="@order.Id"> Details </a> </td>
+                    </tr>
+                     
+                }
+            </tbody>
+           
+        </table>
+
+    }
+    else
+    {
+        <h5>No orders</h5>
+    }
+</div>

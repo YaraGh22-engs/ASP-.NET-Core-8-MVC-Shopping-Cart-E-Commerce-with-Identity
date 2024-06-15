@@ -1,0 +1,195 @@
+﻿@using Microsoft.AspNetCore.Identity
+@model Item
+
+ 
+
+<!-- content -->
+<section class="py-5">
+    <div class="container">
+        <div class="row gx-5">
+            <aside class="col-lg-6">
+                <div class="  mb-3 d-flex justify-content-center">
+                    <a data-fslightbox="mygalley" class="rounded-4" target="_blank" data-type="image"  >
+                        <img style="max-width: 100%; max-height: 100vh; margin: auto;" class="rounded-4 fit" src="@($"{FileSettings.ImagesPath}/{Model.Cover}")" alt="@Model.Name" />
+                    </a>
+                </div>
+                 
+                <!-- thumbs-wrap.// -->
+                <!-- gallery-wrap .end// -->
+            </aside>
+            <main class="col-lg-6">
+                <div class="ps-lg-3">
+                    <h4 class="title text-dark">
+                        @Model.Name
+                        @if (ViewBag.productRate != -1)
+                        {
+                            <span class="mt-2 text text-warning">
+                                @for (int c = 0; c < ViewBag.productRate; c++)
+                                {
+                                    <i class="fa fa-star text-success"></i>
+                                }
+                            </span>
+                        }
+                    </h4> 
+
+                    <div class="d-flex flex-row  my-3">
+                       
+                            <div class="  col-sm-12  col-md-8  ">
+                                @* rating stars*@
+                         
+                        @if (User.Identity.IsAuthenticated)
+                        {
+
+                            <form id="rating-form">
+                                <input type="hidden" value="@Model.Id" id="itemId" />
+                                <div class="star-rating ">
+                                    <input type="radio" id="star5" name="rating" value="5" data-rate="5" />
+                                    <label id="star5" for="star5" title="5 stars" data-rate="5">&#9733;</label>
+                                    <input type="radio" id="star4" name="rating" value="4" data-rate="4" />
+                                    <label id="star4" for="star4" title="4 stars" data-rate="4">&#9733;</label>
+                                    <input type="radio" id="star3" name="rating" value="3" data-rate="3" />
+                                    <label id="star3" for="star3" title="3 stars" data-rate="3">&#9733;</label>
+                                    <input type="radio" id="star2" name="rating" value="2" data-rate="2" />
+                                    <label id="star2" for="star2" title="2 stars" data-rate="2">&#9733;</label>
+                                    <input type="radio" id="star1" name="rating" value="1" data-rate="1" />
+                                    <label id="star1" for="star1" title="1 star" data-rate="1">&#9733;</label>
+                                   
+                                </div>
+                                 
+                                    @if (ViewBag.userRate != -1)
+                                    {
+                                        <span class="ms-1">Your last rate is  @ViewBag.userRate </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="ms-1"> Rate Now   </span>
+                                    }
+
+                                    <span class="text-muted"><i class="fas fa-shopping-basket fa-sm mx-1"></i> 154 orders</span>
+                                 
+                                <div>
+                                    <button type="button" class="btn btn-warning" id="submit-rating" disabled>Send Rating</button>
+                                </div>
+                            </form>
+                        }
+                                 
+                        </div>
+                         
+                      
+                    </div>
+
+                    <div class="mb-3">
+                        <span class="h5">$ @Model.Price </span>
+                        <span class="text-muted">/per Unit</span>
+                    </div>
+
+                    <p>
+                        @Model.Description
+                    </p>
+
+                    <div class="row">
+                        <dt class="col-3">Category:</dt>
+                        <dd class="col-9">@Model.Category.Name</dd>
+                         
+                        <dt class="col-3">Quantity Available</dt>
+                        <dd class="col-9">@Model.Stock.Quantity</dd>
+                         
+                    </div>
+
+                    <hr />
+                    @if (Model.Stock.Quantity > 0)
+                    {
+                        <button type="button" onclick="add(@Model.Id)" class="btn btn-primary">Add to cart</button>
+                    }
+                    else
+                    {
+                        <span style="border: 1px solid;padding: 5px 8px;color: red;border-radius: 5px;">Out of stock</span>
+                    } 
+                    <a href="#" class="btn btn-light border border-secondary py-2 icon-hover px-3"> <i class="me-1 fa fa-heart fa-lg"></i> Save </a>
+                </div>
+            </main>
+        </div>
+    </div>
+</section>
+ 
+ 
+
+ 
+
+     
+
+@section Scripts
+{
+   @*  this for Rating  *@
+    <script  > 
+        // Get all the radio buttons and labels
+        const ratingRadios = $('.star-rating input[type="radio"]');
+        const ratingLabels = $('.star-rating label');
+        const ratingForm = $('#rating-form');
+        const submitButton = $('#submit-rating');
+        const itemId = $('#itemId').val();
+        // Add event listener to the radio buttons
+        ratingRadios.on('change', function () 
+        {
+            submitButton.prop('disabled', false);
+            // Remove the 'selected' class from all labels
+            ratingLabels.removeClass('selected');
+            // Add the 'selected' class to the current and all previous labels
+            $(this).prevAll('label').add(this).addClass('selected');
+        });
+        // Add click event listener to the submit button
+        submitButton.on('click', function () 
+        {
+            submitRatingViaAjax();
+        });
+        function submitRatingViaAjax() 
+        {
+            const ratingValue = $('.star-rating input[name="rating"]:checked').val();
+            $.ajax(
+            {
+                url: `/Items/RateProduct?ratingValue=${ratingValue}&itemId=${itemId}`,
+                method: 'POST',
+                success: function (response) 
+                {
+                    // Handle the successful response
+                    console.log('Rating submitted successfully');
+                    console.log(ratingValue);
+                },
+                error: function (xhr, status, error) 
+                {
+                    // Handle any errors
+                    console.error('Error submitting rating:', error);
+                }
+            }
+            );
+        }
+
+    </script>
+
+    @* this for Add to cart Button *@
+    <script>
+        async function add(itemId) {
+            var usernameEl = document.getElementById("username");
+            if (usernameEl == null) {
+                window.location.href = "/Identity/Account/Login";
+
+            }
+            try {
+                var response = await fetch(`/Cart/AddItem?itemId=${itemId}`);
+                if (response.status == 200) {
+                    var result = await response.json();
+                    var cartCountEl = document.getElementById("cartCount");
+                    cartCountEl.innerHTML = result;
+                    window.location.href = "#cartCount";
+                }
+            }
+            catch (err) {
+                console.log(err);
+            }
+        }
+    </script>
+}
+ 
+
+
+ 

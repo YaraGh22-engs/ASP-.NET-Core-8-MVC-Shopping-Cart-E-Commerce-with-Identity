@@ -1,0 +1,128 @@
+﻿@model ShoppingCart
+@{
+    ViewData["Title"] = "GetUserCart";
+}
+
+<div class="px-4 px-lg-0">
+
+    @if (Model != null && Model.CartDetails != null && Model.CartDetails.Count > 0)
+    {
+        <div class="container   py-5 text-center">
+            <h1 class="display-4">Cart Shopping Detail</h1>
+        </div>
+        <!-- End -->
+        <div class="pb-5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12 p-5 bg-white rounded shadow-sm mb-5">
+
+                        <!-- Shopping cart table -->
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="border-0 bg-light">
+                                            <div class="p-2 px-3 text-uppercase">Product</div>
+                                        </th>
+                                        <th scope="col" class="border-0 bg-light">
+                                            <div class="py-2 text-uppercase">Price</div>
+                                        </th>
+                                        <th scope="col" class="border-0 bg-light">
+                                            <div class="py-2 text-uppercase">Quantity</div>
+                                        </th>
+                                        
+                                        <th scope="col" class="border-0 bg-light">
+                                            <div class="py-2 text-uppercase">Total Price for Item</div>
+                                        </th>
+                                        <th scope="col" class="border-0 bg-light">
+                                            <div class="py-2 text-uppercase"> </div>
+                                        </th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var i in Model.CartDetails)
+                                    {
+                                        <tr>
+                                            <th scope="row" class="border-0">
+                                                <div class="p-2">
+                                                    <img src="/assets/images/items/@i.Item.Cover" alt="" width="70" class="img-fluid rounded shadow-sm">
+                                                    <div class="ml-3 d-inline-block align-middle">
+                                                        <h5 class="mb-0"> <a href="#" class="text-dark d-inline-block align-middle">Timex Unisex Originals</a></h5><span class="text-muted font-weight-normal font-italic d-block">Category: @i.Item.Category.Name</span>
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <td class="border-0 align-middle"><strong>@i.Item.Price</strong></td>
+                                            <td class="border-0 align-middle"><strong>@i.Quantity</strong></td>
+                                            <td class="border-0 align-middle"><strong>@(i.Item.Price * i.Quantity)</strong></td> 
+                                            <td class="border-0 align-middle">
+                                                @* Increase Quantity button *@
+                                                @if (i.Quantity < i.Item.Stock.Quantity)
+                                                {
+                                                    <a class="btn btn-outline-dark" href="/Cart/AddItem?itemId=@i.ItemId&&redirect=1">+</a>
+                                                }
+                                                else
+                                                {
+                                                    <span style="border: 1px solid;padding: 8px 8px;color: red;border-radius: 5px;margin-right:4px">Out of stock </span>
+                                                }
+                                                @* Decrement button *@
+                                                <a class="btn btn-outline-dark" href="/Cart/RemoveItem?itemId=@i.ItemId">-</a>
+                                                @* Remove button *@
+                                                <a href="#" class="text-dark"><i class="fa fa-trash"></i></a> 
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                        <!-- End -->
+                        
+                            
+                    </div>
+                 </div>
+
+                <div class="row py-5 p-4 bg-white rounded shadow-sm">
+                    <div class="col-lg-6">
+                        <div class="bg-light rounded-pill px-4 py-3 text-uppercase fw-bold">Coupon code</div>
+                        <div class="p-4">
+                            <p class="font-italic mb-4">If you have a coupon code, please enter it in the box below</p>
+                            <div class="input-group mb-4 border rounded-pill p-2">
+                                <input type="text" placeholder="Apply coupon" aria-describedby="button-addon3" class="form-control border-0">
+                                <div class="input-group-append border-0">
+                                    <button id="button-addon3" type="button" class="btn btn-dark px-4 rounded-pill"><i class="fa fa-gift mr-2"></i>Apply coupon</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-light rounded-pill px-4 py-3 text-uppercase fw-bold">Instructions for seller</div>
+                        <div class="p-4">
+                            <p class="font-italic mb-4">If you have some information for the seller you can leave them in the box below</p>
+                            <textarea name="" cols="30" rows="2" class="form-control"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="bg-light rounded-pill px-4 py-3 text-uppercase fw-bold">Order summary </div>
+                        <div class="p-4">
+                            <p class="font-italic mb-4">Shipping and additional costs are calculated based on values you have entered.</p>
+                            <ul class="list-unstyled mb-4">
+                                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Order Subtotal </strong><strong>$@(Model.CartDetails.Select(i => i.Item.Price * i.Quantity).Sum())</strong></li>
+                                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Shipping and handling</strong><strong>$0.00</strong></li>
+                                <li class="d-flex justify-content-between py-3 border-bottom"><strong class="text-muted">Tax</strong><strong>$0.00</strong></li>
+                                <li class="d-flex justify-content-between py-3 border-bottom">
+                                    <strong class="text-muted">Total Price of Order </strong>
+                                    <h5 class="font-weight-bold">$@(Model.CartDetails.Select(i => i.Item.Price * i.Quantity).Sum()) </h5>
+                                </li>
+                            </ul><a asp-action="Checkout" class="btn btn-dark rounded-pill py-2 btn-block">Procceed to checkout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> 
+    }
+    else
+    {
+        <div>
+            <h3 style="text-align: center;padding-top: 3rem;margin: 3rem;">Cart is empty</h3>
+        </div>
+        
+    }
+</div>
